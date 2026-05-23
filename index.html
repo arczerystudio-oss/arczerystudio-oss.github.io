@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arczery Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --white:  #F6F6F3;
+      --black:  #0A0A0A;
+      --red:    #E8210C;
+      --gray:   #888;
+      --line:   1.5px solid #0A0A0A;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--white);
+      color: var(--black);
+      font-family: 'Barlow', sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Nav ─────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--white);
+      border-bottom: var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 48px;
+    }
+
+    .nav-logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .nav-links a { opacity: 0.45; transition: opacity 0.15s; }
+    .nav-links a:hover { opacity: 1; }
+
+    /* ── Hero ────────────────────────────────── */
+    #hero {
+      padding: 88px 48px 80px;
+      border-bottom: var(--line);
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      align-items: end;
+      gap: 48px;
+    }
+
+    .hero-hl {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(80px, 12vw, 168px);
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+    }
+
+    .hero-hl .dot { color: var(--red); }
+
+    .hero-aside {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding-bottom: 6px;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--red);
+      flex-shrink: 0;
+    }
+
+    .hero-desc {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--gray);
+      line-height: 1.7;
+    }
+
+    /* ── Section shell ───────────────────────── */
+    section {
+      padding: 56px 48px;
+      border-bottom: var(--line);
+    }
+
+    .sec-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 36px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .sec-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #ccc;
+    }
+
+    /* ── Project grid ────────────────────────── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: var(--line);
+      border-left: var(--line);
+    }
+
+    .card {
+      border-right: var(--line);
+      border-bottom: var(--line);
+      padding: 26px 26px 22px;
+      display: flex;
+      flex-direction: column;
+      min-height: 196px;
+      transition: background 0.15s, color 0.15s;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .card.red {
+      background: var(--red);
+      color: var(--white);
+    }
+
+    .card.red:hover {
+      background: var(--black);
+    }
+
+    .card.ghost {
+      opacity: 0.25;
+      pointer-events: none;
+    }
+
+    .card-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      opacity: 0.3;
+      margin-bottom: 28px;
+    }
+
+    .card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 27px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      line-height: 1.1;
+      flex: 1;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 18px;
+    }
+
+    .card-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.5;
+    }
+
+    .card-arrow {
+      font-size: 15px;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .card:hover .card-arrow,
+    .card.red .card-arrow { opacity: 1; }
+
+    /* ── Skills ──────────────────────────────── */
+    .skills {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: var(--line);
+      border-left: var(--line);
+    }
+
+    .skill-block {
+      border-right: var(--line);
+      border-bottom: var(--line);
+      padding: 24px 26px;
+    }
+
+    .skill-block-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 16px;
+    }
+
+    .skill-list {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 0;
+    }
+
+    .skill-list li {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 16px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .skill-list li::after {
+      content: ' · ';
+      opacity: 0.2;
+      font-weight: 400;
+    }
+
+    .skill-list li:last-child::after { content: ''; }
+
+    /* ── Footer ──────────────────────────────── */
+    footer {
+      padding: 18px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      color: var(--gray);
+    }
+
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a:hover { color: var(--black); }
+
+    /* ── Responsive ──────────────────────────── */
+    @media (max-width: 960px) {
+      nav, section, #hero, footer { padding-left: 20px; padding-right: 20px; }
+      #hero { grid-template-columns: 1fr; gap: 32px; }
+      .grid { grid-template-columns: 1fr 1fr; }
+      .skills { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      .grid { grid-template-columns: 1fr; }
+      .nav-links { gap: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">Arczery Studio</span>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#code">Code</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
+</nav>
+
+<div id="hero">
+  <h1 class="hero-hl">
+    Design<span class="dot">.</span><br>
+    Code<span class="dot">.</span><br>
+    Both<span class="dot">.</span>
+  </h1>
+  <div class="hero-aside">
+    <div class="status">
+      <span class="status-dot"></span>
+      Available for Ausbildung '25
+    </div>
+    <p class="hero-desc">
+      Brand identity, event visuals,<br>
+      Discord bots, APIs.<br>
+      Based in Germany.
+    </p>
+  </div>
+</div>
+
+<!-- Design Work -->
+<section id="work">
+  <div class="sec-label">Design Work</div>
+  <div class="grid">
+
+    <a href="https://www.behance.net/gallery/249387017/Poster-Series-Personal-Exploration"
+       target="_blank" class="card">
+      <span class="card-num">01</span>
+      <h3 class="card-title">Poster Series</h3>
+      <div class="card-footer">
+        <span class="card-tag">Personal Exploration</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="https://www.behance.net/gallery/249391351/Brandt-Dellentechnik-Brand-Identity-Concept"
+       target="_blank" class="card">
+      <span class="card-num">02</span>
+      <h3 class="card-title">Brandt Dellentechnik</h3>
+      <div class="card-footer">
+        <span class="card-tag">Brand Identity</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="https://www.behance.net/gallery/249386737/BLAST-WORLD-25-Event-Visual-Identity"
+       target="_blank" class="card red">
+      <span class="card-num">03</span>
+      <h3 class="card-title">BLAST WORLD '25</h3>
+      <div class="card-footer">
+        <span class="card-tag">Event Identity</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="https://www.behance.net/gallery/249392139/Marathon-CIS-Discord-Server-Visual-Identity"
+       target="_blank" class="card">
+      <span class="card-num">04</span>
+      <h3 class="card-title">Marathon CIS</h3>
+      <div class="card-footer">
+        <span class="card-tag">Discord Identity</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="https://www.behance.net/gallery/249391669/Hiky-Brand-Identity-Concept"
+       target="_blank" class="card">
+      <span class="card-num">05</span>
+      <h3 class="card-title">Hiky</h3>
+      <div class="card-footer">
+        <span class="card-tag">Brand Identity</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="https://www.behance.net/gallery/206177073/Ecogy-Being-Greener"
+       target="_blank" class="card">
+      <span class="card-num">06</span>
+      <h3 class="card-title">Ecogy</h3>
+      <div class="card-footer">
+        <span class="card-tag">Brand Identity</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- Code Work -->
+<section id="code">
+  <div class="sec-label">Code Work</div>
+  <div class="grid">
+
+    <a href="https://github.com/arczerystudio-oss/pulse"
+       target="_blank" class="card">
+      <span class="card-num">01</span>
+      <h3 class="card-title">Pulse</h3>
+      <div class="card-footer">
+        <span class="card-tag">FastAPI · Python</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="https://github.com/arczerystudio-oss/cs2newsbot"
+       target="_blank" class="card">
+      <span class="card-num">02</span>
+      <h3 class="card-title">CS2 News Bot</h3>
+      <div class="card-footer">
+        <span class="card-tag">Discord · RSS</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="https://github.com/arczerystudio-oss/marathon-news"
+       target="_blank" class="card">
+      <span class="card-num">03</span>
+      <h3 class="card-title">Marathon News</h3>
+      <div class="card-footer">
+        <span class="card-tag">Discord · RSS</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="https://github.com/arczerystudio-oss/marathon-support"
+       target="_blank" class="card">
+      <span class="card-num">04</span>
+      <h3 class="card-title">Marathon Support</h3>
+      <div class="card-footer">
+        <span class="card-tag">Discord · Tickets</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="https://github.com/arczerystudio-oss/marathon-bot"
+       target="_blank" class="card">
+      <span class="card-num">05</span>
+      <h3 class="card-title">Marathon Bot</h3>
+      <div class="card-footer">
+        <span class="card-tag">Discord · Python</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <div class="card ghost">
+      <span class="card-num">—</span>
+      <h3 class="card-title" style="font-size:20px;">More soon.</h3>
+      <div class="card-footer"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- About -->
+<section id="about">
+  <div class="sec-label">Skills</div>
+  <div class="skills">
+    <div class="skill-block">
+      <div class="skill-block-label">Design</div>
+      <ul class="skill-list">
+        <li>Figma</li>
+        <li>Brand Identity</li>
+        <li>Typography</li>
+        <li>Event Visuals</li>
+        <li>UI Design</li>
+      </ul>
+    </div>
+    <div class="skill-block">
+      <div class="skill-block-label">Development</div>
+      <ul class="skill-list">
+        <li>Python</li>
+        <li>FastAPI</li>
+        <li>Discord.py</li>
+        <li>Docker</li>
+        <li>HTML / CSS / JS</li>
+        <li>SQLite</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>Arczery Studio — 2025</span>
+  <div class="footer-links">
+    <a href="https://www.behance.net/timosm" target="_blank">Behance</a>
+    <a href="https://github.com/arczerystudio-oss" target="_blank">GitHub</a>
+    <span style="color: var(--black); opacity: 0.35;">Built by Timofei O.</span>
+  </div>
+</footer>
+
+</body>
+</html>
