@@ -115,8 +115,14 @@
       align-items: center;
       justify-content: space-between;
       padding: 18px 48px;
-      mix-blend-mode: difference;
+      background: rgba(245, 245, 242, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: var(--line);
+      transition: transform 0.5s var(--ease);
     }
+
+    nav.nav-hidden { transform: translateY(-110%); }
 
     .nav-logo {
       font-family: 'Barlow Condensed', sans-serif;
@@ -124,7 +130,7 @@
       font-size: 14px;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: white;
+      color: var(--black);
       display: inline-block;
     }
 
@@ -139,8 +145,8 @@
       font-size: 10px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: white;
-      opacity: 0.5;
+      color: var(--black);
+      opacity: 0.45;
       transition: opacity .15s;
       display: inline-block;
     }
@@ -587,6 +593,25 @@
     .grid .reveal:nth-child(5) { transition-delay: .28s; }
     .grid .reveal:nth-child(6) { transition-delay: .35s; }
 
+    /* ── Decorative Letter ────────────────────── */
+    #bg-a {
+      position: fixed;
+      top: 48%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 64vw;
+      line-height: 1;
+      color: var(--black);
+      opacity: 0.033;
+      pointer-events: none;
+      user-select: none;
+      z-index: 0;
+      will-change: transform;
+      letter-spacing: -0.06em;
+    }
+
     /* ── Responsive ────────────────────────────── */
     @media (max-width: 960px) {
       #hero { grid-template-columns: 1fr; height: auto; }
@@ -620,6 +645,9 @@
   <div class="cur-v"></div>
   <div class="cur-dot"></div>
 </div>
+
+<!-- ── Decorative A ─────────────────────── -->
+<div id="bg-a">A</div>
 
 <!-- ── Nav ───────────────────────────────── -->
 <nav>
@@ -703,10 +731,22 @@
       <span>DESIGN ·</span><span>CODE ·</span><span>BRAND IDENTITY ·</span>
       <span>PYTHON ·</span><span>FIGMA ·</span><span>ARCZERY STUDIO ·</span>
       <span>2025 ·</span><span>GRAPHIC DESIGN ·</span><span>DISCORD BOTS ·</span>
+      <span>DESIGN ·</span><span>CODE ·</span><span>BRAND IDENTITY ·</span>
+      <span>PYTHON ·</span><span>FIGMA ·</span><span>ARCZERY STUDIO ·</span>
+      <span>2025 ·</span><span>GRAPHIC DESIGN ·</span><span>DISCORD BOTS ·</span>
+      <span>DESIGN ·</span><span>CODE ·</span><span>BRAND IDENTITY ·</span>
+      <span>PYTHON ·</span><span>FIGMA ·</span><span>ARCZERY STUDIO ·</span>
+      <span>2025 ·</span><span>GRAPHIC DESIGN ·</span><span>DISCORD BOTS ·</span>
     </div>
   </div>
   <div class="mqrow">
     <div class="mqtrack rev">
+      <span>SWISS STYLE ·</span><span>TYPOGRAPHY ·</span><span>FASTAPI ·</span>
+      <span>EVENT VISUALS ·</span><span>GERMANY ·</span><span>AUSBILDUNG '25 ·</span>
+      <span>OPEN TO WORK ·</span><span>BRUTALIST ·</span><span>HELVETICA ·</span>
+      <span>SWISS STYLE ·</span><span>TYPOGRAPHY ·</span><span>FASTAPI ·</span>
+      <span>EVENT VISUALS ·</span><span>GERMANY ·</span><span>AUSBILDUNG '25 ·</span>
+      <span>OPEN TO WORK ·</span><span>BRUTALIST ·</span><span>HELVETICA ·</span>
       <span>SWISS STYLE ·</span><span>TYPOGRAPHY ·</span><span>FASTAPI ·</span>
       <span>EVENT VISUALS ·</span><span>GERMANY ·</span><span>AUSBILDUNG '25 ·</span>
       <span>OPEN TO WORK ·</span><span>BRUTALIST ·</span><span>HELVETICA ·</span>
@@ -1065,6 +1105,37 @@ const ro = new IntersectionObserver(entries => {
 }, { threshold: 0.07 });
 
 document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+
+/* ─────────────────────────────────────────────
+   NAV — HIDE ON SCROLL DOWN, SHOW ON SCROLL UP
+───────────────────────────────────────────── */
+const navEl = document.querySelector('nav');
+let lastScrollY = 0;
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  if (y > lastScrollY && y > 80) {
+    navEl.classList.add('nav-hidden');
+  } else {
+    navEl.classList.remove('nav-hidden');
+  }
+  lastScrollY = y;
+}, { passive: true });
+
+/* ─────────────────────────────────────────────
+   DECORATIVE "A" — SCROLL DRIFT
+───────────────────────────────────────────── */
+const bgA = document.getElementById('bg-a');
+if (bgA) {
+  const driftA = () => {
+    const limit = Math.max(1, document.body.scrollHeight - window.innerHeight);
+    const p = window.scrollY / limit;           // 0 → 1 over full page
+    const x = Math.sin(p * Math.PI) * 24;       // ±24 vw arc
+    const y = (p - 0.5) * 16;                   // –8 vh → +8 vh
+    bgA.style.transform =
+      `translate(calc(-50% + ${x}vw), calc(-50% + ${y}vh))`;
+  };
+  window.addEventListener('scroll', driftA, { passive: true });
+}
 </script>
 
 </body>
