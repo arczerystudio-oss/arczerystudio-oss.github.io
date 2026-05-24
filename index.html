@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Arczery Studio</title>
+  <script>if ('scrollRestoration' in history) history.scrollRestoration = 'manual';</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -258,11 +259,12 @@
       position: relative;
       overflow: hidden;
       user-select: none;
+      padding: 94px 32px 36px; /* top = bottom + nav height (58px) for visual centering */
     }
 
     .slide img {
-      max-width: 68%;
-      max-height: 86%;
+      max-width: calc(100% - 64px);
+      max-height: calc(100% - 130px); /* 94 + 36 */
       object-fit: contain;
       box-shadow: 8px 8px 0 rgba(0,0,0,0.35);
       pointer-events: none;
@@ -699,6 +701,8 @@
       #hero            { grid-template-columns: 1fr; height: auto; }
       .hero-left       { padding: 88px 20px 36px; min-height: 52vh; }
       .hero-right      { height: 52vw; min-height: 240px; }
+      .slide           { padding: 24px; }
+      .slide img       { max-width: calc(100% - 48px); max-height: calc(100% - 48px); }
       nav              { padding: 14px 20px; }
       section          { padding: 40px 20px; }
       footer           { padding: 16px 20px; }
