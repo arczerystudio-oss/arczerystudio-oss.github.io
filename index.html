@@ -614,20 +614,55 @@
 
     /* ── Responsive ────────────────────────────── */
     @media (max-width: 960px) {
-      #hero { grid-template-columns: 1fr; height: auto; }
-      .hero-left { padding: 88px 20px 36px; min-height: 60vh; }
-      .hero-right { height: 60vh; }
-      nav, section, footer { padding-left: 20px; padding-right: 20px; }
-      .nav-logo, .nav-links a { font-size: 11px; }
-      .grid   { grid-template-columns: 1fr 1fr; }
-      .skills { grid-template-columns: 1fr; }
+      #hero            { grid-template-columns: 1fr; height: auto; }
+      .hero-left       { padding: 88px 20px 36px; min-height: 52vh; }
+      .hero-right      { height: 52vw; min-height: 240px; }
+      nav              { padding: 14px 20px; }
+      section          { padding: 40px 20px; }
+      footer           { padding: 16px 20px; }
+      .grid            { grid-template-columns: 1fr 1fr; }
+      .skills          { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 560px) {
-      .grid { grid-template-columns: 1fr; }
-      .nav-links { gap: 16px; }
-      .hero-foot { flex-direction: column; align-items: flex-start; gap: 12px; }
-      .hero-desc { text-align: left; }
+      /* ─ Nav */
+      nav              { padding: 12px 16px; }
+      .nav-logo        { font-size: 12px; }
+      .nav-links       { gap: 14px; }
+      .nav-links a     { font-size: 9px; letter-spacing: 0.08em; }
+
+      /* ─ Hero */
+      .hero-left       { padding: 68px 16px 24px; min-height: auto; }
+      .hero-right      { height: 60vw; min-height: 220px; }
+      .hero-hl         { font-size: clamp(58px, 16vw, 88px); }
+      .hero-foot       { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .hero-desc       { text-align: left; }
+
+      /* ─ Decorative A */
+      #bg-a            { font-size: 130vw; opacity: 0.025; }
+
+      /* ─ Layout */
+      section          { padding: 28px 16px; }
+      footer           { padding: 14px 16px; flex-direction: column; gap: 4px; text-align: center; }
+
+      /* ─ Cards */
+      .grid            { grid-template-columns: 1fr; }
+      .card            { min-height: 150px; padding: 18px 18px 15px; }
+      .card-title      { font-size: 22px; }
+
+      /* ─ Slider footer */
+      .slider-foot     { padding: 0 14px; height: 50px; }
+      .slide-title-el  { font-size: 15px; }
+
+      /* ─ Marquee */
+      .mqtrack         { animation-duration: 18s; font-size: 12px; }
+
+      /* ─ Section decorative number */
+      .sec-bg-num      { font-size: clamp(100px, 30vw, 180px); }
+
+      /* ─ Contact */
+      .contact-email   { font-size: clamp(20px, 7.5vw, 36px); }
+      .contact-links   { flex-wrap: wrap; gap: 18px; }
     }
   </style>
 </head>
