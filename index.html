@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arczery Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+  <style>
+    /* ── Variables ─────────────────────────────── */
+    :root {
+      --white: #F5F5F2;
+      --black: #0A0A0A;
+      --red:   #E8210C;
+      --gray:  #7a7a7a;
+      --dim:   #c8c8c8;
+      --line:  1.5px solid #0A0A0A;
+      --ease:  cubic-bezier(0.76, 0, 0.24, 1);
+    }
+
+    /* ── Reset ─────────────────────────────────── */
+    *, *::before, *::after {
+      box-sizing: border-box; margin: 0; padding: 0;
+      cursor: none !important;
+    }
+    html { scroll-behavior: auto; } /* Lenis handles smooth scroll */
+
+    body {
+      background: var(--white);
+      color: var(--black);
+      font-family: 'Barlow', sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; }
+    button { font: inherit; border: none; background: none; }
+
+    @media (hover: none) {
+      .cursor { display: none !important; }
+      *, *::before, *::after { cursor: auto !important; }
+    }
+
+    /* ── Loader ────────────────────────────────── */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: var(--black);
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 26px;
+      transition: transform 1s var(--ease);
+    }
+
+    #loader.out { transform: translateY(-100%); }
+
+    .ld-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(52px, 9vw, 100px);
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: white;
+      text-align: center;
+      line-height: 0.88;
+    }
+
+    .ld-bar {
+      width: 0;
+      height: 1px;
+      background: white;
+      transition: width 1s ease;
+    }
+
+    /* ── Cursor ────────────────────────────────── */
+    .cursor {
+      position: fixed;
+      top: 0; left: 0;
+      z-index: 9999;
+      pointer-events: none;
+      mix-blend-mode: difference;
+      will-change: transform;
+      transition: transform 0s;
+    }
+
+    .cur-h, .cur-v, .cur-dot {
+      position: absolute;
+      background: white;
+      transform: translate(-50%, -50%);
+      transition: width .18s ease, height .18s ease;
+    }
+
+    .cur-h   { width: 22px; height: 1.5px; }
+    .cur-v   { width: 1.5px; height: 22px; }
+    .cur-dot { width: 3px; height: 3px; border-radius: 50%; }
+
+    .cursor.hover .cur-h { width: 38px; }
+    .cursor.hover .cur-v { height: 38px; }
+
+    /* ── Nav ───────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 48px;
+      mix-blend-mode: difference;
+    }
+
+    .nav-logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: white;
+      display: inline-block;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: white;
+      opacity: 0.5;
+      transition: opacity .15s;
+      display: inline-block;
+    }
+
+    .nav-links a:hover { opacity: 1; }
+
+    /* ── Hero ──────────────────────────────────── */
+    #hero {
+      display: grid;
+      grid-template-columns: 44% 56%;
+      height: 100vh;
+      border-bottom: var(--line);
+      padding-top: 0;
+    }
+
+    .hero-left {
+      padding: 100px 48px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-right: var(--line);
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-hl {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(88px, 11.5vw, 175px);
+      line-height: 0.87;
+      letter-spacing: -0.03em;
+      text-transform: uppercase;
+    }
+
+    .hw { display: block; overflow: hidden; }
+
+    .hw-inner {
+      display: inline-block;
+      transform: translateY(110%);
+      transition: transform 1s var(--ease);
+    }
+
+    .hw-inner.in { transform: translateY(0); }
+    .dot { color: var(--red); }
+
+    .hero-foot {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--red);
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.25} }
+
+    .hero-desc {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--gray);
+      line-height: 1.75;
+      text-align: right;
+    }
+
+    /* ── Poster Slider ─────────────────────────── */
+    /*
+      Put your images in Portfolio/images/ as:
+        poster1.jpg  poster2.jpg  poster3.jpg  poster4.jpg
+    */
+    .hero-right {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .slider-wrap {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slider-track {
+      display: flex;
+      height: 100%;
+      transition: transform .95s var(--ease);
+      will-change: transform;
+    }
+
+    .slide {
+      min-width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    .slide img {
+      max-width: 68%;
+      max-height: 86%;
+      object-fit: contain;
+      box-shadow: 8px 8px 0 rgba(0,0,0,0.35);
+      pointer-events: none;
+      transition: transform .95s var(--ease);
+    }
+
+    /* Subtle image scale on active slide */
+    .slide.active img { transform: scale(1.02); }
+
+    /* ── Slide footer bar ──────────────────────── */
+    .slider-foot {
+      flex-shrink: 0;
+      border-top: var(--line);
+      padding: 0 28px;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .slide-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      overflow: hidden;
+    }
+
+    .slide-tag-el {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray);
+      transition: opacity .3s ease;
+    }
+
+    .slide-title-el {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 19px;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: opacity .3s ease;
+    }
+
+    .slide-meta.switching .slide-tag-el,
+    .slide-meta.switching .slide-title-el { opacity: 0; }
+
+    .slider-controls {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
+    }
+
+    .sl-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 18px;
+      line-height: 1;
+      opacity: 0.6;
+      transition: opacity .15s;
+      display: inline-block;
+      padding: 6px;
+    }
+
+    .sl-btn:hover { opacity: 1; }
+
+    .sl-count {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      min-width: 48px;
+      text-align: center;
+    }
+
+    /* ── Double Marquee ────────────────────────── */
+    .dmarquee {
+      background: var(--black);
+      color: white;
+      overflow: hidden;
+      border-bottom: var(--line);
+    }
+
+    .mqrow {
+      overflow: hidden;
+      padding: 11px 0;
+    }
+
+    .mqrow + .mqrow {
+      border-top: 1px solid #1e1e1e;
+    }
+
+    .mqtrack {
+      display: flex;
+      width: max-content;
+      white-space: nowrap;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      animation: tick 32s linear infinite;
+    }
+
+    .mqtrack.rev { animation-direction: reverse; }
+    .mqtrack span { padding: 0 10px; }
+
+    @keyframes tick {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    .dmarquee:hover .mqtrack { animation-play-state: paused; }
+
+    /* ── Section shell ─────────────────────────── */
+    section {
+      position: relative;
+      padding: 56px 48px;
+      border-bottom: var(--line);
+      overflow: hidden;
+    }
+
+    .sec-bg-num {
+      position: absolute;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(180px, 26vw, 340px);
+      opacity: 0.038;
+      right: -8px;
+      top: -16px;
+      line-height: 1;
+      user-select: none;
+      pointer-events: none;
+      letter-spacing: -0.04em;
+      z-index: 0;
+    }
+
+    .sec-label {
+      position: relative;
+      z-index: 1;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 36px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .sec-label::after {
+      content: ''; flex: 1;
+      height: 1px; background: var(--dim);
+    }
+
+    /* ── Cards ─────────────────────────────────── */
+    .grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: var(--line);
+      border-left: var(--line);
+    }
+
+    .card {
+      border-right: var(--line);
+      border-bottom: var(--line);
+      padding: 26px 26px 22px;
+      display: flex;
+      flex-direction: column;
+      min-height: 194px;
+      transition: background .2s, color .2s;
+    }
+
+    .card:hover       { background: var(--black); color: white; }
+    .card.red         { background: var(--red); color: white; }
+    .card.red:hover   { background: var(--black); }
+    .card.ghost       { opacity: 0.2; pointer-events: none; }
+
+    .card-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      opacity: 0.3;
+      margin-bottom: 26px;
+      letter-spacing: 0.08em;
+    }
+
+    .card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 28px;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      line-height: 1.1;
+      flex: 1;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 18px;
+    }
+
+    .card-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.45;
+    }
+
+    .card-arrow { font-size: 14px; opacity: 0; transition: opacity .15s; }
+    .card:hover .card-arrow,
+    .card.red   .card-arrow { opacity: 1; }
+
+    /* ── Skills ────────────────────────────────── */
+    .skills {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: var(--line);
+      border-left: var(--line);
+    }
+
+    .skill-block {
+      border-right: var(--line);
+      border-bottom: var(--line);
+      padding: 24px 26px;
+    }
+
+    .skill-lbl {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 14px;
+    }
+
+    .skill-list { list-style: none; display: flex; flex-wrap: wrap; }
+
+    .skill-list li {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 17px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .skill-list li::after { content: ' · '; opacity: 0.2; font-weight: 400; }
+    .skill-list li:last-child::after { content: ''; }
+
+    /* ── Contact ───────────────────────────────── */
+    #contact { background: var(--black); color: white; }
+    #contact .sec-label { color: #444; }
+    #contact .sec-label::after { background: #222; }
+    #contact .sec-bg-num { opacity: 0.06; color: white; }
+
+    .contact-email {
+      display: block;
+      position: relative;
+      z-index: 1;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: clamp(28px, 5.5vw, 72px);
+      text-transform: lowercase;
+      letter-spacing: -0.01em;
+      line-height: 1;
+      border-bottom: 1.5px solid #1e1e1e;
+      padding-bottom: 28px;
+      margin-bottom: 28px;
+      transition: color .2s;
+    }
+
+    .contact-email:hover { color: var(--red); }
+
+    .contact-links {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 28px;
+    }
+
+    .contact-link {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #444;
+      transition: color .15s;
+      display: inline-block;
+    }
+
+    .contact-link:hover { color: white; }
+
+    /* ── Footer ────────────────────────────────── */
+    footer {
+      padding: 18px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      color: var(--gray);
+    }
+
+    /* ── Scroll Reveal ─────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+
+    .reveal.in-view { opacity: 1; transform: translateY(0); }
+
+    .grid .reveal:nth-child(1) { transition-delay: .00s; }
+    .grid .reveal:nth-child(2) { transition-delay: .07s; }
+    .grid .reveal:nth-child(3) { transition-delay: .14s; }
+    .grid .reveal:nth-child(4) { transition-delay: .21s; }
+    .grid .reveal:nth-child(5) { transition-delay: .28s; }
+    .grid .reveal:nth-child(6) { transition-delay: .35s; }
+
+    /* ── Responsive ────────────────────────────── */
+    @media (max-width: 960px) {
+      #hero { grid-template-columns: 1fr; height: auto; }
+      .hero-left { padding: 88px 20px 36px; min-height: 60vh; }
+      .hero-right { height: 60vh; }
+      nav, section, footer { padding-left: 20px; padding-right: 20px; }
+      .nav-logo, .nav-links a { font-size: 11px; }
+      .grid   { grid-template-columns: 1fr 1fr; }
+      .skills { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      .grid { grid-template-columns: 1fr; }
+      .nav-links { gap: 16px; }
+      .hero-foot { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .hero-desc { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Loader ─────────────────────────────── -->
+<div id="loader">
+  <p class="ld-name">ARCZERY<br>STUDIO</p>
+  <div class="ld-bar" id="ldBar"></div>
+</div>
+
+<!-- ── Cursor ─────────────────────────────── -->
+<div class="cursor" id="cursor">
+  <div class="cur-h"></div>
+  <div class="cur-v"></div>
+  <div class="cur-dot"></div>
+</div>
+
+<!-- ── Nav ───────────────────────────────── -->
+<nav>
+  <a href="#" class="nav-logo mag">Arczery Studio</a>
+  <ul class="nav-links">
+    <li><a href="#work"    class="mag">Work</a></li>
+    <li><a href="#code"    class="mag">Code</a></li>
+    <li><a href="#about"   class="mag">About</a></li>
+    <li><a href="#contact" class="mag">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ── Hero ──────────────────────────────── -->
+<section id="hero" style="padding:0; border-bottom: var(--line);">
+
+  <div class="hero-left">
+    <h1 class="hero-hl">
+      <span class="hw"><span class="hw-inner">DESIGN<span class="dot">.</span></span></span>
+      <span class="hw"><span class="hw-inner">CODE<span class="dot">.</span></span></span>
+      <span class="hw"><span class="hw-inner">BOTH<span class="dot">.</span></span></span>
+    </h1>
+    <div class="hero-foot">
+      <div class="status">
+        <span class="status-dot"></span>
+        Available for Ausbildung '25
+      </div>
+      <p class="hero-desc">
+        Brand identity · Event visuals<br>
+        Discord bots · APIs · Germany
+      </p>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="slider-wrap" id="sliderWrap">
+      <div class="slider-track" id="sliderTrack">
+
+        <div class="slide active" style="background:#e8e6e0;">
+          <img src="images/poster1.jpg" alt="Architecture Series">
+        </div>
+
+        <div class="slide" style="background:#111;">
+          <img src="images/poster2.jpg" alt="Visionary Process">
+        </div>
+
+        <div class="slide" style="background:#0c0c0c;">
+          <img src="images/poster3.jpg" alt="Mapping Structures">
+        </div>
+
+        <div class="slide" style="background:#200a08;">
+          <img src="images/poster4.jpg" alt="CALM Art Show">
+        </div>
+
+      </div>
+    </div>
+
+    <div class="slider-foot">
+      <div class="slide-meta" id="slideMeta">
+        <span class="slide-tag-el"  id="slideTag">Poster Design</span>
+        <span class="slide-title-el" id="slideTitle">Architecture Series</span>
+      </div>
+      <div class="slider-controls">
+        <button class="sl-btn mag" id="prevBtn">←</button>
+        <span class="sl-count">
+          <span id="slCur">01</span> / <span id="slTot">04</span>
+        </span>
+        <button class="sl-btn mag" id="nextBtn">→</button>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ── Double Marquee ─────────────────────── -->
+<div class="dmarquee">
+  <div class="mqrow">
+    <div class="mqtrack">
+      <span>DESIGN ·</span><span>CODE ·</span><span>BRAND IDENTITY ·</span>
+      <span>PYTHON ·</span><span>FIGMA ·</span><span>ARCZERY STUDIO ·</span>
+      <span>2025 ·</span><span>GRAPHIC DESIGN ·</span><span>DISCORD BOTS ·</span>
+      <span>DESIGN ·</span><span>CODE ·</span><span>BRAND IDENTITY ·</span>
+      <span>PYTHON ·</span><span>FIGMA ·</span><span>ARCZERY STUDIO ·</span>
+      <span>2025 ·</span><span>GRAPHIC DESIGN ·</span><span>DISCORD BOTS ·</span>
+    </div>
+  </div>
+  <div class="mqrow">
+    <div class="mqtrack rev">
+      <span>SWISS STYLE ·</span><span>TYPOGRAPHY ·</span><span>FASTAPI ·</span>
+      <span>EVENT VISUALS ·</span><span>GERMANY ·</span><span>AUSBILDUNG '25 ·</span>
+      <span>OPEN TO WORK ·</span><span>BRUTALIST ·</span><span>HELVETICA ·</span>
+      <span>SWISS STYLE ·</span><span>TYPOGRAPHY ·</span><span>FASTAPI ·</span>
+      <span>EVENT VISUALS ·</span><span>GERMANY ·</span><span>AUSBILDUNG '25 ·</span>
+      <span>OPEN TO WORK ·</span><span>BRUTALIST ·</span><span>HELVETICA ·</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── Design Work ────────────────────────── -->
+<section id="work">
+  <span class="sec-bg-num">06</span>
+  <div class="sec-label reveal">Design Work</div>
+  <div class="grid">
+
+    <a href="https://www.behance.net/gallery/249387017/Poster-Series-Personal-Exploration"
+       target="_blank" class="card reveal">
+      <span class="card-num">01</span>
+      <h3 class="card-title">Poster Series</h3>
+      <div class="card-footer">
+        <span class="card-tag">Personal Exploration</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="https://www.behance.net/gallery/249391351/Brandt-Dellentechnik-Brand-Identity-Concept"
+       target="_blank" class="card reveal">
+      <span class="card-num">02</span>
+      <h3 class="card-title">Brandt Dellentechnik</h3>
+      <div class="card-footer">
+        <span class="card-tag">Brand Identity</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="https://www.behance.net/gallery/249386737/BLAST-WORLD-25-Event-Visual-Identity"
+       target="_blank" class="card red reveal">
+      <span class="card-num">03</span>
+      <h3 class="card-title">BLAST WORLD '25</h3>
+      <div class="card-footer">
+        <span class="card-tag">Event Identity</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="https://www.behance.net/gallery/249392139/Marathon-CIS-Discord-Server-Visual-Identity"
+       target="_blank" class="card reveal">
+      <span class="card-num">04</span>
+      <h3 class="card-title">Marathon CIS</h3>
+      <div class="card-footer">
+        <span class="card-tag">Discord Identity</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="https://www.behance.net/gallery/249391669/Hiky-Brand-Identity-Concept"
+       target="_blank" class="card reveal">
+      <span class="card-num">05</span>
+      <h3 class="card-title">Hiky</h3>
+      <div class="card-footer">
+        <span class="card-tag">Brand Identity</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="https://www.behance.net/gallery/206177073/Ecogy-Being-Greener"
+       target="_blank" class="card reveal">
+      <span class="card-num">06</span>
+      <h3 class="card-title">Ecogy</h3>
+      <div class="card-footer">
+        <span class="card-tag">Brand Identity</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ── Code Work ──────────────────────────── -->
+<section id="code">
+  <span class="sec-bg-num">05</span>
+  <div class="sec-label reveal">Code Work</div>
+  <div class="grid">
+
+    <a href="https://github.com/arczerystudio-oss/pulse"
+       target="_blank" class="card reveal">
+      <span class="card-num">01</span>
+      <h3 class="card-title">Pulse</h3>
+      <div class="card-footer">
+        <span class="card-tag">FastAPI · Python</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="https://github.com/arczerystudio-oss/cs2newsbot"
+       target="_blank" class="card reveal">
+      <span class="card-num">02</span>
+      <h3 class="card-title">CS2 News Bot</h3>
+      <div class="card-footer">
+        <span class="card-tag">Discord · RSS</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="https://github.com/arczerystudio-oss/marathon-news"
+       target="_blank" class="card reveal">
+      <span class="card-num">03</span>
+      <h3 class="card-title">Marathon News</h3>
+      <div class="card-footer">
+        <span class="card-tag">Discord · RSS</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="https://github.com/arczerystudio-oss/marathon-support"
+       target="_blank" class="card reveal">
+      <span class="card-num">04</span>
+      <h3 class="card-title">Marathon Support</h3>
+      <div class="card-footer">
+        <span class="card-tag">Discord · Tickets</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="https://github.com/arczerystudio-oss/marathon-bot"
+       target="_blank" class="card reveal">
+      <span class="card-num">05</span>
+      <h3 class="card-title">Marathon Bot</h3>
+      <div class="card-footer">
+        <span class="card-tag">Discord · Python</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <div class="card ghost">
+      <span class="card-num">—</span>
+      <h3 class="card-title" style="font-size:18px;opacity:.4;">More soon.</h3>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── Skills ────────────────────────────── -->
+<section id="about">
+  <div class="sec-label reveal">Skills</div>
+  <div class="skills reveal">
+    <div class="skill-block">
+      <div class="skill-lbl">Design</div>
+      <ul class="skill-list">
+        <li>Figma</li><li>Brand Identity</li><li>Typography</li>
+        <li>Event Visuals</li><li>UI Design</li>
+      </ul>
+    </div>
+    <div class="skill-block">
+      <div class="skill-lbl">Development</div>
+      <ul class="skill-list">
+        <li>Python</li><li>FastAPI</li><li>Discord.py</li>
+        <li>Docker</li><li>HTML / CSS / JS</li><li>SQLite</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ── Contact ───────────────────────────── -->
+<section id="contact">
+  <span class="sec-bg-num" style="color:white;">✉</span>
+  <div class="sec-label">Contact</div>
+  <a href="mailto:arczerystudio@gmail.com" class="contact-email reveal">
+    arczerystudio@gmail.com
+  </a>
+  <div class="contact-links reveal">
+    <a href="https://www.behance.net/timosm" target="_blank" class="contact-link mag">Behance ↗</a>
+    <a href="https://github.com/arczerystudio-oss" target="_blank" class="contact-link mag">GitHub ↗</a>
+  </div>
+</section>
+
+<!-- ── Footer ───────────────────────────── -->
+<footer>
+  <span>Arczery Studio — 2025</span>
+  <span style="opacity:.35;">Built by Timofei O.</span>
+</footer>
+
+<script>
+/* ─────────────────────────────────────────────
+   SMOOTH SCROLL (Lenis)
+───────────────────────────────────────────── */
+let lenis;
+try {
+  lenis = new Lenis({ duration: 1.25, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+  (function raf(t) { lenis.raf(t); requestAnimationFrame(raf); })(0);
+} catch(e) { /* CDN failed gracefully */ }
+
+/* ─────────────────────────────────────────────
+   NOISE TEXTURE
+───────────────────────────────────────────── */
+(function() {
+  const c = document.createElement('canvas');
+  c.width = c.height = 200;
+  const ctx = c.getContext('2d');
+  const d = ctx.createImageData(200, 200);
+  for (let i = 0; i < d.data.length; i += 4) {
+    const v = (Math.random() * 255) | 0;
+    d.data[i] = d.data[i+1] = d.data[i+2] = v;
+    d.data[i+3] = 255;
+  }
+  ctx.putImageData(d, 0, 0);
+  const noise = document.createElement('div');
+  Object.assign(noise.style, {
+    position: 'fixed', inset: '0',
+    pointerEvents: 'none', zIndex: '9996',
+    opacity: '0.032',
+    backgroundImage: `url(${c.toDataURL()})`,
+    backgroundSize: '200px',
+  });
+  document.body.appendChild(noise);
+})();
+
+/* ─────────────────────────────────────────────
+   LOADER
+───────────────────────────────────────────── */
+const loader = document.getElementById('loader');
+const ldBar  = document.getElementById('ldBar');
+
+setTimeout(() => { ldBar.style.cssText += 'width:160px; transition:width 1s ease;'; }, 100);
+
+setTimeout(() => {
+  loader.classList.add('out');
+  startHeroAnimations();
+  setTimeout(() => loader.remove(), 1100);
+}, 1700);
+
+function startHeroAnimations() {
+  document.querySelectorAll('.hw-inner').forEach((el, i) => {
+    setTimeout(() => el.classList.add('in'), i * 170);
+  });
+}
+
+/* ─────────────────────────────────────────────
+   CURSOR
+───────────────────────────────────────────── */
+const cursor = document.getElementById('cursor');
+let mx = -300, my = -300, cx = -300, cy = -300;
+
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+(function loop() {
+  cx += (mx - cx) * 0.13;
+  cy += (my - cy) * 0.13;
+  cursor.style.transform = `translate(${cx}px,${cy}px)`;
+  requestAnimationFrame(loop);
+})();
+
+document.querySelectorAll('a, button').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+  el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+});
+
+/* ─────────────────────────────────────────────
+   MAGNETIC ELEMENTS
+───────────────────────────────────────────── */
+document.querySelectorAll('.mag').forEach(el => {
+  el.addEventListener('mousemove', e => {
+    const r = el.getBoundingClientRect();
+    const x = (e.clientX - r.left - r.width  / 2) * 0.28;
+    const y = (e.clientY - r.top  - r.height / 2) * 0.28;
+    el.style.transform = `translate(${x}px,${y}px)`;
+  });
+  el.addEventListener('mouseleave', () => {
+    el.style.transition = 'transform .4s ease';
+    el.style.transform  = '';
+    setTimeout(() => el.style.transition = '', 400);
+  });
+});
+
+/* ─────────────────────────────────────────────
+   POSTER SLIDER
+───────────────────────────────────────────── */
+const slides     = Array.from(document.querySelectorAll('.slide'));
+const track      = document.getElementById('sliderTrack');
+const prevBtn    = document.getElementById('prevBtn');
+const nextBtn    = document.getElementById('nextBtn');
+const slCur      = document.getElementById('slCur');
+const slideMeta  = document.getElementById('slideMeta');
+const slideTagEl = document.getElementById('slideTag');
+const slideTitEl = document.getElementById('slideTitle');
+
+const slideData = [
+  { tag: 'Poster Design',       title: 'Architecture Series'      },
+  { tag: 'Art Exhibition',      title: 'Visionary Process'        },
+  { tag: 'Exhibition Identity', title: 'Mapping Social Structures' },
+  { tag: 'Event Branding',      title: 'CALM Art Show'            },
+];
+
+let current = 0;
+
+function goTo(idx) {
+  slides[current].classList.remove('active');
+  current = ((idx % slides.length) + slides.length) % slides.length;
+  slides[current].classList.add('active');
+
+  track.style.transform = `translateX(-${current * 100}%)`;
+  slCur.textContent = String(current + 1).padStart(2, '0');
+
+  // Caption crossfade
+  slideMeta.classList.add('switching');
+  setTimeout(() => {
+    slideTagEl.textContent = slideData[current].tag;
+    slideTitEl.textContent = slideData[current].title;
+    slideMeta.classList.remove('switching');
+  }, 280);
+}
+
+prevBtn.addEventListener('click', () => goTo(current - 1));
+nextBtn.addEventListener('click', () => goTo(current + 1));
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft')  goTo(current - 1);
+  if (e.key === 'ArrowRight') goTo(current + 1);
+});
+
+// Drag / touch
+let dragStart = null;
+track.addEventListener('mousedown',  e => { dragStart = e.clientX; track.style.transition = 'none'; });
+document.addEventListener('mouseup', e => {
+  if (dragStart === null) return;
+  track.style.transition = '';
+  const d = e.clientX - dragStart;
+  if (Math.abs(d) > 55) goTo(d > 0 ? current - 1 : current + 1);
+  dragStart = null;
+});
+track.addEventListener('touchstart', e => { dragStart = e.touches[0].clientX; }, { passive: true });
+track.addEventListener('touchend',   e => {
+  if (dragStart === null) return;
+  const d = e.changedTouches[0].clientX - dragStart;
+  if (Math.abs(d) > 55) goTo(d > 0 ? current - 1 : current + 1);
+  dragStart = null;
+});
+
+// Hide images that fail to load
+document.querySelectorAll('.slide img').forEach(img => {
+  img.addEventListener('error', () => img.style.display = 'none');
+});
+
+/* ─────────────────────────────────────────────
+   SCROLL REVEAL
+───────────────────────────────────────────── */
+const ro = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in-view');
+      ro.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.07 });
+
+document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+</script>
+
+</body>
+</html>
