@@ -439,13 +439,18 @@
       display: flex;
       flex-direction: column;
       min-height: 194px;
-      transition: background .2s, color .2s;
+      position: relative;
+      overflow: hidden;
+      transition: background .2s, color .2s, box-shadow .3s var(--ease);
     }
 
-    .card:hover       { background: var(--black); color: white; }
+    .card:hover       { background: var(--black); color: white; box-shadow: inset 4px 0 0 var(--red); }
     .card.red         { background: var(--red); color: white; }
-    .card.red:hover   { background: var(--black); }
+    .card.red:hover   { background: var(--black); box-shadow: inset 4px 0 0 var(--red); }
     .card.ghost       { opacity: 0.2; pointer-events: none; }
+
+    .card.red .card-num { opacity: 0.55; }
+    .card.red .card-tag { opacity: 0.82; }
 
     .card-num {
       font-family: 'IBM Plex Mono', monospace;
@@ -463,7 +468,10 @@
       letter-spacing: 0.02em;
       line-height: 1.1;
       flex: 1;
+      transition: letter-spacing .4s var(--ease);
     }
+
+    .card:hover .card-title { letter-spacing: 0.07em; }
 
     .card-footer {
       display: flex;
@@ -593,24 +601,98 @@
     .grid .reveal:nth-child(5) { transition-delay: .28s; }
     .grid .reveal:nth-child(6) { transition-delay: .35s; }
 
-    /* ── Decorative Letter ────────────────────── */
-    #bg-a {
-      position: fixed;
-      top: 48%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 900;
-      font-size: 64vw;
+    /* ── Card ghost text ───────────────────────── */
+    .card-ghost {
+      position: absolute;
+      bottom: 14px;
+      right: 16px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: clamp(28px, 3vw, 44px);
+      font-weight: 400;
       line-height: 1;
-      color: var(--black);
-      opacity: 0.033;
+      letter-spacing: -0.03em;
+      white-space: nowrap;
+      color: currentColor;
+      opacity: 0.07;
       pointer-events: none;
       user-select: none;
-      z-index: 0;
-      will-change: transform;
-      letter-spacing: -0.06em;
+      transition: opacity .2s;
     }
+    .card:hover .card-ghost { opacity: 0.13; }
+
+    /* ── Contact redesign ───────────────────────── */
+    .contact-hl {
+      position: relative;
+      z-index: 1;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(60px, 9vw, 130px);
+      text-transform: uppercase;
+      line-height: 0.87;
+      letter-spacing: -0.02em;
+      color: white;
+      margin-bottom: 22px;
+    }
+
+    .contact-sub {
+      position: relative;
+      z-index: 1;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 38px;
+    }
+
+    .contact-btn {
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--black);
+      background: white;
+      border: 1.5px solid white;
+      padding: 14px 42px;
+      margin-bottom: 56px;
+      transition: background .2s, color .2s, border-color .2s;
+    }
+
+    .contact-btn:hover { background: var(--red); border-color: var(--red); color: white; }
+
+    .contact-foot {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #1e1e1e;
+      padding-top: 22px;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .contact-foot .contact-email {
+      font-size: clamp(13px, 1.8vw, 20px);
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-bottom: 0;
+    }
+
+    /* ── Skill description ──────────────────────── */
+    .skill-desc {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      line-height: 1.8;
+      color: var(--gray);
+      margin-top: 14px;
+      opacity: 0.75;
+    }
+
 
     /* ── Responsive ────────────────────────────── */
     @media (max-width: 960px) {
@@ -637,9 +719,6 @@
       .hero-hl         { font-size: clamp(58px, 16vw, 88px); }
       .hero-foot       { flex-direction: column; align-items: flex-start; gap: 10px; }
       .hero-desc       { text-align: left; }
-
-      /* ─ Decorative A */
-      #bg-a            { font-size: 130vw; opacity: 0.025; }
 
       /* ─ Layout */
       section          { padding: 28px 16px; }
@@ -681,9 +760,6 @@
   <div class="cur-dot"></div>
 </div>
 
-<!-- ── Decorative A ─────────────────────── -->
-<div id="bg-a">A</div>
-
 <!-- ── Nav ───────────────────────────────── -->
 <nav>
   <a href="#" class="nav-logo mag">Arczery Studio</a>
@@ -707,7 +783,7 @@
     <div class="hero-foot">
       <div class="status">
         <span class="status-dot"></span>
-        Available for Ausbildung '25
+        Available for Ausbildung '26
       </div>
       <p class="hero-desc">
         Brand identity · Event visuals<br>
@@ -777,16 +853,16 @@
   <div class="mqrow">
     <div class="mqtrack rev">
       <span>SWISS STYLE ·</span><span>TYPOGRAPHY ·</span><span>FASTAPI ·</span>
-      <span>EVENT VISUALS ·</span><span>GERMANY ·</span><span>AUSBILDUNG '25 ·</span>
+      <span>EVENT VISUALS ·</span><span>GERMANY ·</span><span>AUSBILDUNG '26 ·</span>
       <span>OPEN TO WORK ·</span><span>BRUTALIST ·</span><span>HELVETICA ·</span>
       <span>SWISS STYLE ·</span><span>TYPOGRAPHY ·</span><span>FASTAPI ·</span>
-      <span>EVENT VISUALS ·</span><span>GERMANY ·</span><span>AUSBILDUNG '25 ·</span>
+      <span>EVENT VISUALS ·</span><span>GERMANY ·</span><span>AUSBILDUNG '26 ·</span>
       <span>OPEN TO WORK ·</span><span>BRUTALIST ·</span><span>HELVETICA ·</span>
       <span>SWISS STYLE ·</span><span>TYPOGRAPHY ·</span><span>FASTAPI ·</span>
-      <span>EVENT VISUALS ·</span><span>GERMANY ·</span><span>AUSBILDUNG '25 ·</span>
+      <span>EVENT VISUALS ·</span><span>GERMANY ·</span><span>AUSBILDUNG '26 ·</span>
       <span>OPEN TO WORK ·</span><span>BRUTALIST ·</span><span>HELVETICA ·</span>
       <span>SWISS STYLE ·</span><span>TYPOGRAPHY ·</span><span>FASTAPI ·</span>
-      <span>EVENT VISUALS ·</span><span>GERMANY ·</span><span>AUSBILDUNG '25 ·</span>
+      <span>EVENT VISUALS ·</span><span>GERMANY ·</span><span>AUSBILDUNG '26 ·</span>
       <span>OPEN TO WORK ·</span><span>BRUTALIST ·</span><span>HELVETICA ·</span>
     </div>
   </div>
@@ -799,7 +875,7 @@
   <div class="grid">
 
     <a href="https://www.behance.net/gallery/249387017/Poster-Series-Personal-Exploration"
-       target="_blank" class="card reveal">
+       target="_blank" class="card red reveal">
       <span class="card-num">01</span>
       <h3 class="card-title">Poster Series</h3>
       <div class="card-footer">
@@ -819,7 +895,7 @@
     </a>
 
     <a href="https://www.behance.net/gallery/249386737/BLAST-WORLD-25-Event-Visual-Identity"
-       target="_blank" class="card red reveal">
+       target="_blank" class="card reveal">
       <span class="card-num">03</span>
       <h3 class="card-title">BLAST WORLD '25</h3>
       <div class="card-footer">
@@ -870,6 +946,7 @@
     <a href="https://github.com/arczerystudio-oss/pulse"
        target="_blank" class="card reveal">
       <span class="card-num">01</span>
+      <span class="card-ghost">/status</span>
       <h3 class="card-title">Pulse</h3>
       <div class="card-footer">
         <span class="card-tag">FastAPI · Python</span>
@@ -880,6 +957,7 @@
     <a href="https://github.com/arczerystudio-oss/cs2newsbot"
        target="_blank" class="card reveal">
       <span class="card-num">02</span>
+      <span class="card-ghost">feed.poll()</span>
       <h3 class="card-title">CS2 News Bot</h3>
       <div class="card-footer">
         <span class="card-tag">Discord · RSS</span>
@@ -890,6 +968,7 @@
     <a href="https://github.com/arczerystudio-oss/marathon-news"
        target="_blank" class="card reveal">
       <span class="card-num">03</span>
+      <span class="card-ghost">sha256()</span>
       <h3 class="card-title">Marathon News</h3>
       <div class="card-footer">
         <span class="card-tag">Discord · RSS</span>
@@ -900,6 +979,7 @@
     <a href="https://github.com/arczerystudio-oss/marathon-support"
        target="_blank" class="card reveal">
       <span class="card-num">04</span>
+      <span class="card-ghost">/ticket</span>
       <h3 class="card-title">Marathon Support</h3>
       <div class="card-footer">
         <span class="card-tag">Discord · Tickets</span>
@@ -910,6 +990,7 @@
     <a href="https://github.com/arczerystudio-oss/marathon-bot"
        target="_blank" class="card reveal">
       <span class="card-num">05</span>
+      <span class="card-ghost">on_ready()</span>
       <h3 class="card-title">Marathon Bot</h3>
       <div class="card-footer">
         <span class="card-tag">Discord · Python</span>
@@ -935,6 +1016,11 @@
         <li>Figma</li><li>Brand Identity</li><li>Typography</li>
         <li>Event Visuals</li><li>UI Design</li>
       </ul>
+      <p class="skill-desc">
+        Building visual identities from scratch — logos, poster series,<br>
+        event graphics, and digital assets. Swiss typographic influence,<br>
+        clean grids, intentional whitespace.
+      </p>
     </div>
     <div class="skill-block">
       <div class="skill-lbl">Development</div>
@@ -942,6 +1028,11 @@
         <li>Python</li><li>FastAPI</li><li>Discord.py</li>
         <li>Docker</li><li>HTML / CSS / JS</li><li>SQLite</li>
       </ul>
+      <p class="skill-desc">
+        Shipping bots, REST APIs, and web tools with clean architecture.<br>
+        Comfortable with async Python, containerisation, and deploying<br>
+        to cloud platforms like Fly.io.
+      </p>
     </div>
   </div>
 </section>
@@ -950,12 +1041,25 @@
 <section id="contact">
   <span class="sec-bg-num" style="color:white;">✉</span>
   <div class="sec-label">Contact</div>
-  <a href="mailto:arczerystudio@gmail.com" class="contact-email reveal">
-    arczerystudio@gmail.com
+
+  <h2 class="contact-hl reveal">
+    GOT A<br>PROJECT<span class="dot">?</span>
+  </h2>
+  <p class="contact-sub reveal">
+    Available for Ausbildung '26 — design, code, or both.
+  </p>
+  <a href="mailto:arczerystudio@gmail.com" class="contact-btn reveal mag">
+    Write me →
   </a>
-  <div class="contact-links reveal">
-    <a href="https://www.behance.net/timosm" target="_blank" class="contact-link mag">Behance ↗</a>
-    <a href="https://github.com/arczerystudio-oss" target="_blank" class="contact-link mag">GitHub ↗</a>
+
+  <div class="contact-foot reveal">
+    <a href="mailto:arczerystudio@gmail.com" class="contact-email">
+      arczerystudio@gmail.com
+    </a>
+    <div class="contact-links">
+      <a href="https://www.behance.net/timosm" target="_blank" class="contact-link mag">Behance ↗</a>
+      <a href="https://github.com/arczerystudio-oss" target="_blank" class="contact-link mag">GitHub ↗</a>
+    </div>
   </div>
 </section>
 
@@ -1141,6 +1245,7 @@ const ro = new IntersectionObserver(entries => {
 
 document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
 
+
 /* ─────────────────────────────────────────────
    NAV — HIDE ON SCROLL DOWN, SHOW ON SCROLL UP
 ───────────────────────────────────────────── */
@@ -1156,21 +1261,6 @@ window.addEventListener('scroll', () => {
   lastScrollY = y;
 }, { passive: true });
 
-/* ─────────────────────────────────────────────
-   DECORATIVE "A" — SCROLL DRIFT
-───────────────────────────────────────────── */
-const bgA = document.getElementById('bg-a');
-if (bgA) {
-  const driftA = () => {
-    const limit = Math.max(1, document.body.scrollHeight - window.innerHeight);
-    const p = window.scrollY / limit;           // 0 → 1 over full page
-    const x = Math.sin(p * Math.PI) * 24;       // ±24 vw arc
-    const y = (p - 0.5) * 16;                   // –8 vh → +8 vh
-    bgA.style.transform =
-      `translate(calc(-50% + ${x}vw), calc(-50% + ${y}vh))`;
-  };
-  window.addEventListener('scroll', driftA, { passive: true });
-}
 </script>
 
 </body>
